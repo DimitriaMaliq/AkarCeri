@@ -157,7 +157,8 @@ const LessonDetailContent: React.FC<LessonDetailContentProps> = ({ slug, lesson 
   const isPublicSpeaking =
     lesson.pillarId === 'speak-confidence' ||
     lesson.pillar === 'Public Speaking & Communication' ||
-    lesson.slug === 'berani-bicara';
+    lesson.slug === 'berani-bicara' ||
+    lesson.slug === 'menyampaikan-ide';
 
   const backLink = isEnglishYourWay
     ? { to: '/pelajaran/english-your-way', label: 'Kembali ke English Your Way' }
@@ -168,13 +169,17 @@ const LessonDetailContent: React.FC<LessonDetailContentProps> = ({ slug, lesson 
   const prevNavigationLink = isEnglishYourWay
     ? { to: '/pelajaran/english-your-way', label: 'Kembali ke English Your Way' }
     : isPublicSpeaking
-    ? { to: '/pelajaran/public-speaking', label: 'Silabus Public Speaking' }
+    ? lesson.slug === 'menyampaikan-ide'
+      ? { to: '/pelajaran/berani-bicara', label: '← Modul 01: Berani Bicara' }
+      : { to: '/pelajaran/public-speaking', label: 'Silabus Public Speaking' }
     : { to: '/eksplorasi', label: 'Eksplorasi Kurikulum' };
 
   const nextNavigationLink = isEnglishYourWay
     ? { to: '#', label: 'Modul 02: Speak Without Translating (Segera Hadir)', disabled: true }
     : isPublicSpeaking
-    ? { to: '#', label: 'Modul 02: Menyampaikan Ide (Segera Hadir)', disabled: true }
+    ? lesson.slug === 'berani-bicara'
+      ? { to: '/pelajaran/menyampaikan-ide', label: 'Modul 02: Menyampaikan Ide →' }
+      : { to: '#', label: 'Modul 03: Bicara di Depan Orang (Segera Hadir)', disabled: true }
     : { to: '/eksplorasi', label: 'Eksplorasi Lainnya' };
 
   const completionParentLink = isEnglishYourWay
@@ -183,12 +188,21 @@ const LessonDetailContent: React.FC<LessonDetailContentProps> = ({ slug, lesson 
     ? { to: '/pelajaran/public-speaking', label: 'Kembali ke Silabus Public Speaking' }
     : undefined;
 
-  const completionNextSlug = undefined;
+  const completionNextSlug =
+    lesson.slug === 'berani-bicara' ? 'menyampaikan-ide' : undefined;
+
   const completionNextTitle = isEnglishYourWay
     ? 'Modul 02: Speak Without Translating'
     : isPublicSpeaking
-    ? 'Modul 02: Menyampaikan Ide'
+    ? lesson.slug === 'berani-bicara'
+      ? 'Modul 02: Menyampaikan Ide'
+      : 'Modul 03: Bicara di Depan Orang'
     : 'Modul Berikutnya';
+
+  const currentModuleIndex =
+    lesson.slug === 'menyampaikan-ide' ? 2 : 1;
+
+  const totalModules = isPublicSpeaking ? 4 : isEnglishYourWay ? 6 : 6;
 
   return (
     <>
@@ -256,10 +270,10 @@ const LessonDetailContent: React.FC<LessonDetailContentProps> = ({ slug, lesson 
         {/* 5. Sources & References Section */}
         <LessonSources sources={lesson.sources} />
 
-        {/* 6. Lesson Navigation (← Previous | Lesson 01 / 06 | Next →) */}
+        {/* 6. Lesson Navigation (← Previous | Lesson 0X / 0Y | Next →) */}
         <LessonNavigation
-          currentModuleIndex={1}
-          totalModules={6}
+          currentModuleIndex={currentModuleIndex}
+          totalModules={totalModules}
           prevLink={prevNavigationLink}
           nextLink={nextNavigationLink}
         />

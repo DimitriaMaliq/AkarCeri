@@ -13,6 +13,10 @@ export interface LessonVideo {
   embedUrl: string; // embeddable URL
   learningContext: string;
   duration?: string;
+  thinkAboutIt?: {
+    question: string;
+    options: string[];
+  };
 }
 
 export interface QuizOption {
@@ -101,6 +105,53 @@ export interface RealLifeChoice {
   description: string;
 }
 
+export interface OneSentenceExercise {
+  topics: string[];
+  prompt: string;
+  sampleTopic: string;
+  sampleMessage: string;
+}
+
+export interface IdeaOrderingItem {
+  id: string;
+  expectedOrder: number; // 1 = Point, 2 = Reason, 3 = Example
+  partName: 'Point (Gagasan Utama)' | 'Reason (Alasan Kuat)' | 'Example (Contoh Konkret)';
+  text: string;
+}
+
+export interface IdeaOrderingExercise {
+  title: string;
+  instruction: string;
+  items: IdeaOrderingItem[];
+  explanation: string;
+}
+
+export interface SimplifyExerciseOption {
+  id: string;
+  text: string;
+  isBest: boolean;
+  feedback: string;
+}
+
+export interface SimplifyExercise {
+  originalComplex: string;
+  prompt: string;
+  options: SimplifyExerciseOption[];
+}
+
+export interface RapidStructureExercise {
+  topic: string;
+  preparationSeconds: number;
+  pointPrompt: string;
+  reasonPrompt: string;
+  examplePrompt: string;
+  sampleStructure?: {
+    point: string;
+    reason: string;
+    example: string;
+  };
+}
+
 export interface LessonSection {
   id: string;
   orderNumber: string; // e.g. "01", "02"
@@ -120,6 +171,10 @@ export interface LessonSection {
   listenRepeatSteps?: ListenRepeatItem[];
   interactiveScenario?: InteractiveScenario;
   realLifeChoices?: RealLifeChoice[];
+  oneSentenceExercise?: OneSentenceExercise;
+  ideaOrderingExercise?: IdeaOrderingExercise;
+  simplifyExercise?: SimplifyExercise;
+  rapidStructureExercise?: RapidStructureExercise;
 }
 
 export interface Lesson {
@@ -130,7 +185,7 @@ export interface Lesson {
   pillar: string; // e.g. "Public Speaking & Communication"
   pillarId: string;
   pillarSlug?: string;
-  level: 'Pemula' | 'Menengah' | 'Lanjutan';
+  level: 'Pemula' | 'Pemula-Menengah' | 'Menengah' | 'Menengah-Lanjutan' | 'Lanjutan' | string;
   duration: string; // e.g. "15–20 Menit"
   learningObjectives: string[];
   overview: string;
@@ -141,9 +196,14 @@ export interface Lesson {
   reflectionQuestions?: ReflectionQuestion[];
   speakingGoalPrompt?: {
     title: string;
+    subtitle?: string;
     description: string;
+    checklistItems?: string[];
+    closingStatement?: string;
     presetGoals: string[];
   };
+  completionTitle?: string;
+  completionMessage?: string;
   sources: Source[];
 }
 
@@ -441,6 +501,498 @@ export const module01BeraniBicara: Lesson = {
     },
     {
       title: 'Pedoman Konseling Sebaya & Bina Ketahanan Remaja',
+      authorOrInstitution: 'BKKBN & Jejaring PIK-R Indonesia',
+      url: 'https://www.bkkbn.go.id/',
+      type: 'Panduan',
+    },
+  ],
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MODULE 02: MENYAMPAIKAN IDE (Public Speaking & Communication)
+// ─────────────────────────────────────────────────────────────────────────────
+export const module02MenyampaikanIde: Lesson = {
+  slug: 'menyampaikan-ide',
+  title: 'Menyampaikan Ide',
+  subtitle: 'Belajar mengubah pikiran yang masih acak menjadi pesan yang jelas, runtut, dan mudah dipahami orang lain.',
+  moduleNumber: 'Modul 02',
+  pillar: 'Public Speaking & Communication',
+  pillarId: 'speak-confidence',
+  pillarSlug: 'public-speaking',
+  level: 'Pemula-Menengah',
+  duration: '20 Menit',
+  learningObjectives: [
+    'Mengidentifikasi satu ide utama yang tajam dari topik yang masih luas.',
+    'Menata pikiran yang acak menjadi alur pesan yang runtut dan terarah.',
+    'Membedakan gagasan pokok dengan rincian pendukung agar tidak melantur.',
+    'Menguasai kerangka komunikasi Point → Reason → Example dalam menyampaikan pendapat.',
+    'Menjelaskan gagasan menggunakan bahasa yang jelas, konkret, dan familiar.',
+    'Menyesuaikan gaya bahasa dan contoh dengan kebutuhan pendengar (audience awareness).',
+    'Menyampaikan satu ide utuh secara percaya diri dalam batas waktu 60 detik.',
+  ],
+  overview:
+    'Ide yang bagus akan lebih mudah dipahami ketika disampaikan dengan struktur yang jelas. Di modul ini, kamu akan belajar mengubah isi pikiran yang masih acak menjadi pesan yang runtut, memilih bahasa yang jelas, memahami kebutuhan audiens, dan menuntaskan tantangan bicara 60 detik.',
+  completionTitle: 'Ide Kamu Sekarang Lebih Terarah.',
+  completionMessage:
+    'Kamu sudah belajar mengubah pikiran menjadi pesan yang lebih jelas dan terstruktur. Langkah berikutnya adalah membawa ide tersebut ke depan orang lain.',
+  sections: [
+    {
+      id: 'section-01',
+      orderNumber: '01',
+      title: 'Kamu Punya Ide. Sekarang, Bagaimana Cara Menyampaikannya?',
+      subtitle: 'Mengubah Pikiran Acak Menjadi Pesan Berbobot',
+      type: 'text',
+      content: [
+        'Banyak orang sebenarnya memiliki ide yang cemerlang, pandangan menarik, atau pengalaman berharga. Namun saat diminta menjelaskan kepada orang lain, kalimat yang keluar terasa membingungkan atau berputar-putar tanpa arah.',
+        'Masalah ini biasanya bukan karena kamu kurang pintar atau tidak memahami topikmu. Hambatan paling umum terjadi ketika terlalu banyak gagasan muncul bersamaan di kepala, pembicara belum menentukan pesan utama, penjelasan melompat dari satu hal ke hal lain, atau contoh sudah buru-buru diucapkan sebelum poin intinya jelas.',
+        'Menyampaikan ide bukan tentang berbicara sebanyak mungkin atau memakai kata-kata yang rumit. Ini tentang membantu orang lain memahami apa yang penting dari apa yang kamu pikirkan.',
+      ],
+      callout: {
+        type: 'insight',
+        text: 'Menyampaikan ide bukan tentang berbicara sebanyak mungkin. Ini tentang membantu orang lain memahami apa yang penting dari apa yang kamu pikirkan.',
+      },
+      keyTakeaways: [
+        'Tantangan terbesar bicara bukan kekurangan materi, melainkan kelebihan ide yang belum disaring.',
+        'Pendengar hanya bisa menyerap informasi yang terstruktur rapi dan memiliki titik fokus.',
+        'Fondasi komunikasi yang jelas dimulai dari satu pesan inti yang tegas.',
+      ],
+    },
+    {
+      id: 'section-02',
+      orderNumber: '02',
+      title: '01 — Temukan Ide Utamamu',
+      subtitle: 'Membedakan Topik dengan Pesan Utama',
+      type: 'exercise',
+      content: [
+        'Langkah pertama agar bicaramu tidak melantur adalah memahami perbedaan mendasar antara Topik (Topic) dan Pesan Utama (Main Message).',
+        'Topik adalah payung besar yang sangat luas—misalnya "Media Sosial", "Sekolah", atau "Uang". Sementara pesan utama adalah pernyataan spesifik yang ingin kamu sampaikan tentang topik tersebut, misalnya: "Media sosial bisa menjadi alat belajar yang bermanfaat jika digunakan dengan bijak."',
+        'Sebelum membuka suara, selalu jawab satu pertanyaan pengarah ini dalam benakmu:',
+      ],
+      callout: {
+        type: 'tip',
+        text: 'Kalau orang hanya mengingat satu hal dari perkataanku, apa yang ingin aku tinggalkan?',
+        author: 'Prinsip Inti Komunikasi',
+      },
+      oneSentenceExercise: {
+        topics: [
+          'Media Sosial',
+          'Sekolah & Belajar',
+          'Pertemanan',
+          'Organisasi & OSIS',
+          'Pengelolaan Uang',
+          'Kesehatan Mental',
+          'Cita-cita & Masa Depan',
+        ],
+        prompt:
+          'Pilih satu topik yang dekat dengan kehidupanmu, lalu ubah topik tersebut menjadi satu pesan utama dalam satu kalimat tegas.',
+        sampleTopic: 'Media Sosial',
+        sampleMessage:
+          'Media sosial bisa menjadi alat belajar yang bermanfaat jika digunakan dengan bijak.',
+      },
+    },
+    {
+      id: 'section-03',
+      orderNumber: '03',
+      title: '02 — Rapikan Pikiranmu',
+      subtitle: 'Formula Point → Reason → Example',
+      type: 'exercise',
+      content: [
+        'Setelah menemukan satu pesan utama, bagaimana cara merangkai argumen agar terdengar kokoh dan mudah dicerna? Gunakan formula klasik yang terbukti efektif di panggung diskusi global: POINT → REASON → EXAMPLE.',
+        '• POINT: Apa gagasan atau pendapat utamamu? (Contoh: "Menurutku, remaja perlu belajar mengatur uang sejak dini.")',
+        '• REASON: Mengapa kamu berpendapat demikian? (Contoh: "Karena kebiasaan finansial yang sehat jauh lebih mudah dibangun saat kita masih muda.")',
+        '• EXAMPLE: Apa bukti atau contoh konkret yang mempermudah pemahaman? (Contoh: "Misalnya, mulai dari mencatat pengeluaran harian dan membedakan kebutuhan dengan sekadar keinginan.")',
+        'Struktur 3 langkah ini mencegah kita berbicara melompat-lompat dan memastikan pesanmu langsung mendarat di benak pendengar.',
+      ],
+      ideaOrderingExercise: {
+        title: 'Interactive Exercise: Susun Ide (Point → Reason → Example)',
+        instruction:
+          'Tiga kalimat di bawah ini tersusun secara acak. Tentukan posisi masing-masing kalimat agar membentuk argumen yang runtut dan logis.',
+        items: [
+          {
+            id: 'ord-ex',
+            expectedOrder: 3,
+            partName: 'Example (Contoh Konkret)',
+            text: 'Misalnya, kamu bisa mulai dengan mencatat pengeluaran harian dan menyisihkan 10% uang saku.',
+          },
+          {
+            id: 'ord-pt',
+            expectedOrder: 1,
+            partName: 'Point (Gagasan Utama)',
+            text: 'Menurutku, remaja perlu belajar mengatur uang sejak dini.',
+          },
+          {
+            id: 'ord-rs',
+            expectedOrder: 2,
+            partName: 'Reason (Alasan Kuat)',
+            text: 'Kebiasaan ini membantu kita membuat keputusan keuangan yang lebih bijak tanpa terlilit utang di masa depan.',
+          },
+        ],
+        explanation:
+          'Urutan yang tepat adalah: 1. Point ("Menurutku, remaja perlu belajar mengatur uang sejak dini") → 2. Reason ("Kebiasaan ini membantu kita membuat keputusan keuangan yang lebih bijak...") → 3. Example ("Misalnya, mulai dengan mencatat pengeluaran harian..."). Dengan alur ini, pendengar memahami dulu posisi pendapatmu, alasan logis di baliknya, lalu contoh nyatanya.',
+      },
+    },
+    {
+      id: 'section-04',
+      orderNumber: '04',
+      title: '03 — Bicara dengan Bahasa yang Jelas',
+      subtitle: 'Kejelasan Melampaui Kerumitan Kata',
+      type: 'exercise',
+      content: [
+        'Banyak orang mengira pembicara yang hebat adalah mereka yang memakai kosakata rumit, istilah asing yang sulit, atau kalimat sastra yang panjang. Faktanya justru sebaliknya: bukti penguasaan ide yang matang adalah kemampuan menjelaskan hal rumit secara sederhana.',
+        'Ingat enam aturan emas bahasa yang jelas saat berbicara:',
+      ],
+      keyTakeaways: [
+        'Gunakan kata yang familiar bagi pendengar sehari-hari.',
+        'Hindari kalimat majemuk yang terlalu panjang hingga kamu kehabisan napas.',
+        'Jangan menumpuk terlalu banyak data atau rincian sekaligus.',
+        'Gunakan analogi atau contoh konkret dari pengalaman nyata.',
+        'Hindari jargon teknis jika audiensmu belum memahaminya.',
+        'Satu kalimat sebaiknya membawa satu gagasan utama (One sentence, one thought).',
+      ],
+      callout: {
+        type: 'quote',
+        text: 'Jelas bukan berarti sederhana secara berlebihan. Jelas berarti orang lain tahu persis apa yang kamu maksud tanpa harus menebak-nebak.',
+      },
+      simplifyExercise: {
+        originalComplex:
+          'Pemanfaatan platform digital dalam konteks pembelajaran memiliki potensi signifikan dalam meningkatkan aksesibilitas terhadap sumber pengetahuan.',
+        prompt:
+          'Bagaimana kamu menyederhanakan kalimat kaku di atas agar terasa akrab dan langsung dipahami teman sebangkumu?',
+        options: [
+          {
+            id: 'simp-1',
+            text: 'Teknologi dan internet bisa membuat kita lebih mudah mendapatkan materi belajar kapan pun.',
+            isBest: true,
+            feedback:
+              'Tepat sekali! Bahasanya bersahabat, lugas, dan pesan intinya tersampaikan tanpa istilah yang bikin pusing.',
+          },
+          {
+            id: 'simp-2',
+            text: 'Platform digital berkontribusi positif pada perolehan data dan referensi siswa secara terstruktur.',
+            isBest: false,
+            feedback:
+              'Masih terdengar seperti laporan birokrasi atau proposal skripsi, bukan gaya obrolan yang hangat.',
+          },
+          {
+            id: 'simp-3',
+            text: 'Belajar digital itu intinya punya signifikansi akses terhadap informasi global.',
+            isBest: false,
+            feedback:
+              'Kata "signifikansi akses" masih termasuk jargon yang membuat pendengar berkerut kening.',
+          },
+        ],
+      },
+    },
+    {
+      id: 'section-05',
+      orderNumber: '05',
+      title: '04 — Pikirkan Orang yang Mendengarkanmu',
+      subtitle: 'Audience Awareness & Adaptasi Bahasa',
+      type: 'text',
+      content: [
+        'Komunikasi bukanlah monolog satu arah. Setiap kali kamu membuka suara, ada telinga dan pikiran orang lain yang sedang memproses kata-katamu.',
+        'Sebelum mulai berbicara, biasakan memeriksa empat radar ini:',
+        '1. Siapa yang mendengarkan? (Apakah teman sebaya, bapak/ibu guru, juri lomba, atau audiens umum?)',
+        '2. Apa yang sudah mereka ketahui tentang topik ini?',
+        '3. Apa yang mungkin belum mereka pahami atau butuh diperjelas?',
+        '4. Contoh apa yang paling relevan dan dekat dengan dunia keseharian mereka?',
+      ],
+      callout: {
+        type: 'insight',
+        text: 'Menyampaikan ide bukan hanya tentang apa yang ingin kamu katakan, tetapi juga tentang apa yang perlu dipahami oleh orang yang mendengarkan.',
+      },
+      interactiveScenario: {
+        context:
+          'Kamu ingin mengusulkan pengadaan "Pojok Baca & Diskusi Santai" di sekolah. Bagaimana kamu menyesuaikan caramu menjelaskan ide ini kepada Kepala Sekolah vs Teman Sekelas?',
+        options: [
+          {
+            id: 'scen-a',
+            text: 'Membacakan teks proposal anggaran biaya yang kaku dan rumit kepada teman sekelas saat jam istirahat.',
+            isBest: false,
+            feedback:
+              'Teman sekelasmu akan bosan karena rincian anggaran bukan hal yang menarik bagi keseharian mereka.',
+          },
+          {
+            id: 'scen-b',
+            text: 'Menjelaskan kontribusi pojok baca pada iklim literasi sekolah kepada Kepala Sekolah, lalu fokus pada koleksi komik/novel seru dan tempat ngobrol nyaman saat mengajak teman sekelas.',
+            isBest: true,
+            feedback:
+              'Luar biasa! Kamu memahami apa yang dipedulikan oleh masing-masing pihak: pihak sekolah memikirkan dampak edukasi, sedangkan teman sebaya memikirkan kenyamanan dan keseruan.',
+          },
+          {
+            id: 'scen-c',
+            text: 'Menggunakan satu naskah hafalan yang sama persis tanpa mengubah satu kata pun untuk siapa pun yang kamu temui.',
+            isBest: false,
+            feedback:
+              'Komunikasi yang efektif membutuhkan fleksibilitas; berbicara tanpa empati audiens membuat pesan terasa dingin.',
+          },
+        ],
+      },
+    },
+    {
+      id: 'section-06',
+      orderNumber: '06',
+      title: 'Tonton dari Ahlinya',
+      subtitle: 'How to Speak So That People Want to Listen',
+      type: 'video',
+      content: [
+        'Julian Treasure membagikan rahasia bagaimana cara kita berbicara dapat memengaruhi apakah orang lain benar-benar ingin mendengarkan atau justru mengabaikan kita.',
+      ],
+    },
+    {
+      id: 'section-07',
+      orderNumber: '07',
+      title: 'Practice — Susun Ide dalam 30 Detik',
+      subtitle: 'Latihan Kerangka Cepat Point → Reason → Example',
+      type: 'exercise',
+      content: [
+        'Dalam situasi nyata seperti diskusi kelas atau rapat OSIS, kita sering kali tidak punya waktu 1 jam untuk menulis naskah. Kita hanya punya 30 detik untuk merapikan isi kepala.',
+        'Tantang dirimu sekarang: ambil topik di bawah ini, luangkan 30 detik untuk berpikir, lalu susun kerangka 3 poinmu.',
+      ],
+      rapidStructureExercise: {
+        topic: 'Mengapa remaja perlu belajar mengatur waktu?',
+        preparationSeconds: 30,
+        pointPrompt: 'Apa gagasan utamamu tentang mengatur waktu?',
+        reasonPrompt: 'Mengapa kamu berpendapat begitu?',
+        examplePrompt: 'Apa satu contoh konkret dalam keseharian siswa?',
+        sampleStructure: {
+          point: 'Menurutku, mengatur waktu membuat remaja punya kebebasan lebih banyak, bukan sebaliknya.',
+          reason:
+            'Karena saat kita tahu kapan harus fokus belajar, kita bisa santai bermain game atau nongkrong tanpa dihantui rasa bersalah.',
+          example:
+            'Misalnya, selesaikan tugas 1 jam setelah sampai di rumah, lalu malam harinya bebas untuk hobi.',
+        },
+      },
+    },
+    {
+      id: 'section-08',
+      orderNumber: '08',
+      title: '60-Second Challenge',
+      subtitle: 'Sampaikan Ide Lengkap dengan Struktur Terarah',
+      type: 'challenge',
+      content: [
+        'Sekarang saatnya menyatukan seluruh latihanmu. Sampaikan satu ide utuh dalam waktu 60 detik tanpa membaca naskah panjang. Bicaralah dengan suara lantang mengikuti 4 langkah kerangka terarah di bawah.',
+      ],
+    },
+    {
+      id: 'section-09',
+      orderNumber: '09',
+      title: 'Cek Pemahaman',
+      subtitle: 'Kuis Situasi & Struktur Komunikasi',
+      type: 'quiz',
+      content: [
+        'Uji pemahamanmu tentang cara merapikan gagasan, memilih struktur yang efektif, dan berempati pada audiens.',
+      ],
+    },
+    {
+      id: 'section-10',
+      orderNumber: '10',
+      title: 'Take a Moment',
+      subtitle: 'Refleksi Diri & Kebiasaan Menyampaikan Ide',
+      type: 'reflection',
+      content: [
+        'Menyadari bagian mana yang paling menantang bagimu adalah kunci untuk bertumbuh sebagai pembicara yang jernih.',
+      ],
+    },
+    {
+      id: 'section-11',
+      orderNumber: '11',
+      title: 'Sekarang Kamu Bisa…',
+      subtitle: 'Aksi Nyata • Target 7 Hari',
+      type: 'goal',
+      content: [
+        'Kecakapan menyusun ide tidak bertumbuh dari hafalan teori belaka, melainkan dari keberanian mengulang satu komitmen mikro yang nyata.',
+      ],
+    },
+  ],
+  video: {
+    speaker: 'Julian Treasure',
+    title: 'How to Speak So That People Want to Listen',
+    institution: 'TED Conferences',
+    url: 'https://www.ted.com/talks/julian_treasure_how_to_speak_so_that_people_want_to_listen',
+    embedUrl: 'https://www.youtube-nocookie.com/embed/eIho2S0ZahI',
+    learningContext:
+      'Julian Treasure membahas bagaimana cara kita berbicara dapat memengaruhi apakah orang lain mau mendengarkan. Pelajari formula H.A.I.L (Honesty, Authenticity, Integrity, Love) untuk memastikan idemu disampaikan dengan kejelasan dan ketulusan.',
+    duration: '9 Menit 58 Detik',
+    thinkAboutIt: {
+      question: 'Saat menyampaikan ide, mana yang paling sulit bagimu?',
+      options: [
+        'Menemukan inti pesan yang jelas',
+        'Menyusun urutan ide agar runtut',
+        'Memilih kata yang tepat & tidak berbelit',
+        'Membuat orang lain benar-benar paham',
+        'Tetap fokus saat berbicara tanpa kehilangan alur',
+      ],
+    },
+  },
+  challenge: {
+    id: 'challenge-m02-60s',
+    title: '60-Second Challenge',
+    subtitle: 'Sampaikan Ide Lengkap dengan Struktur Terarah',
+    durationSeconds: 60,
+    instructions:
+      'Sampaikan satu ide dalam waktu 60 detik menggunakan kerangka Point → Reason → Example → Closing. Aktifkan pengatur waktu di bawah dan bicaralah secara bersuara.',
+    steps: [
+      {
+        step: 1,
+        instruction: 'POINT — Nyatakan gagasan atau pendapat utamamu dengan tegas.',
+        detail: 'Contoh: "Menurutku, remaja perlu mulai belajar mengatur uang sendiri sejak dini..."',
+      },
+      {
+        step: 2,
+        instruction: 'REASON — Berikan satu alasan terkuat yang mendukung pendapatmu.',
+        detail:
+          'Contoh: "...karena kebiasaan finansial yang bijak jauh lebih mudah dibentuk sekarang daripada saat sudah dewasa nanti..."',
+      },
+      {
+        step: 3,
+        instruction: 'EXAMPLE — Berikan satu contoh konkret dari kehidupan sehari-hari.',
+        detail:
+          'Contoh: "...misalnya dengan membiasakan mencatat uang jajan dan menyisihkan 10% sebelum mulai berbelanja..."',
+      },
+      {
+        step: 4,
+        instruction: 'CLOSING — Tutup dengan satu kalimat pengingat yang berkesan bagi pendengar.',
+        detail:
+          'Contoh: "...jadi mengelola uang bukan soal seberapa banyak uangmu, tapi seberapa bijak kamu mengendalikannya. Terima kasih."',
+      },
+    ],
+    completionNote:
+      'Luar biasa! Kamu berhasil menyampaikan ide berbobot dalam 60 detik tanpa berbelit-belit.',
+  },
+  quiz: [
+    {
+      id: 'quiz-m02-q1',
+      question:
+        'Rani ingin menyampaikan pendapat tentang pentingnya membaca. Ia langsung memberikan lima alasan berbeda tanpa menjelaskan inti pendapatnya. Apa masalah utama dalam penyampaiannya?',
+      options: [
+        { id: 'opt1-a', text: 'Rani berbicara terlalu pelan' },
+        { id: 'opt1-b', text: 'Rani belum menentukan pesan utama' },
+        { id: 'opt1-c', text: 'Rani terlalu banyak menggunakan gestur' },
+        { id: 'opt1-d', text: 'Rani kurang menggunakan humor' },
+      ],
+      correctAnswerId: 'opt1-b',
+      explanation:
+        'Sebelum memberikan alasan, pembicara perlu tahu pesan utama yang ingin disampaikan agar penjelasannya tetap terarah.',
+    },
+    {
+      id: 'quiz-m02-q2',
+      question:
+        'Struktur penyampaian mana yang paling jelas dan terarah bagi pendengar?',
+      options: [
+        {
+          id: 'opt2-a',
+          text: '“Menurutku olahraga penting. Banyak manfaatnya. Aku juga suka olahraga. Temanku juga suka basket.”',
+        },
+        {
+          id: 'opt2-b',
+          text: '“Menurutku remaja perlu berolahraga secara rutin. Olahraga membantu menjaga tubuh tetap aktif dan sehat. Misalnya, berjalan kaki atau bermain basket beberapa kali seminggu.”',
+        },
+        {
+          id: 'opt2-c',
+          text: '“Ada banyak sekali jenis olahraga di dunia dan semua orang punya pendapat berbeda tentang kesehatan.”',
+        },
+        {
+          id: 'opt2-d',
+          text: '“Waktu itu temanku mengajak main basket di lapangan komplek karena cuacanya sedang bagus sekali.”',
+        },
+      ],
+      correctAnswerId: 'opt2-b',
+      explanation:
+        'Pilihan B memiliki alur yang paling jelas dan runtut mengikuti formula Point (pendapat) → Reason (alasan) → Example (contoh).',
+    },
+    {
+      id: 'quiz-m02-q3',
+      question:
+        'Kamu sedang menjelaskan konsep baru atau ide yang belum familiar kepada seorang teman. Pendekatan apa yang paling efektif?',
+      options: [
+        { id: 'opt3-a', text: 'Gunakan sebanyak mungkin istilah teknis agar terdengar pintar.' },
+        { id: 'opt3-b', text: 'Berikan penjelasan sepanjang mungkin tanpa memberi jeda.' },
+        { id: 'opt3-c', text: 'Gunakan bahasa yang familiar dan sertakan satu contoh konkret dari keseharian.' },
+        { id: 'opt3-d', text: 'Hindari memberi contoh agar temanmu membayangkan sendiri maknanya.' },
+      ],
+      correctAnswerId: 'opt3-c',
+      explanation:
+        'Kejelasan bahasa dan contoh konkret dari keseharian membantu pendengar mengaitkan konsep baru dengan pengalaman yang sudah mereka ketahui.',
+    },
+    {
+      id: 'quiz-m02-q4',
+      question:
+        'Kamu memiliki waktu 60 detik untuk menjelaskan suatu ide di depan forum atau kelas. Apa yang sebaiknya menjadi prioritas utamamu?',
+      options: [
+        { id: 'opt4-a', text: 'Berbicara secepat mungkin agar bisa menyampaikan sepuluh poin sekaligus.' },
+        { id: 'opt4-b', text: 'Menggunakan kosakata rumit dan istilah sastra yang sulit dipahami.' },
+        {
+          id: 'opt4-c',
+          text: 'Menyampaikan satu pesan utama yang jelas dan mendukungnya dengan satu alasan serta satu contoh konkret.',
+        },
+        { id: 'opt4-d', text: 'Menghafalkan setiap kata secara kaku persis seperti catatan teks.' },
+      ],
+      correctAnswerId: 'opt4-c',
+      explanation:
+        'Dalam batas waktu singkat, prioritas tertinggi adalah menjaga satu pesan inti tetap jernih dan didukung argumen yang terstruktur (Point → Reason → Example), bukan kecepatan bicara.',
+    },
+  ],
+  reflectionQuestions: [
+    {
+      id: 'ref-m02-1',
+      question: 'Saat menyampaikan ide, bagian mana yang paling menantang bagimu?',
+      placeholder:
+        'Contoh: Menemukan inti pesan, menyusun alasan yang kuat, memberikan contoh yang pas, berbicara tanpa kehilangan alur, atau menyesuaikan penjelasan dengan audiens...',
+      helperText: 'Pilih satu atau tuliskan tantangan terbesar yang sering kamu rasakan.',
+    },
+    {
+      id: 'ref-m02-2',
+      question:
+        'Setelah menyelesaikan modul ini, apa satu hal yang ingin kamu lakukan berbeda saat menyampaikan ide berikutnya?',
+      placeholder:
+        'Contoh: Menyiapkan 1 pesan utama sebelum bicara, memakai formula Point-Reason-Example, atau menyederhanakan kata-kata rumit...',
+      helperText: 'Tentukan satu perbaikan kecil yang realistis untuk dicoba minggu ini.',
+    },
+  ],
+  speakingGoalPrompt: {
+    title: 'Sekarang Kamu Bisa…',
+    subtitle: 'Aksi Nyata • Target 7 Hari',
+    description:
+      'Kecakapan menyusun ide tidak bertumbuh dari hafalan teori belaka, melainkan dari keberanian mengulang satu komitmen mikro yang nyata.',
+    checklistItems: [
+      'Menemukan ide utama sebelum mulai berbicara',
+      'Membedakan topik luas dengan pesan utama yang spesifik',
+      'Menyusun pikiran secara runtut dengan Point → Reason → Example',
+      'Menjelaskan ide rumit menggunakan bahasa yang jelas & familiar',
+      'Mempertimbangkan audiens dan kebutuhan pendengar',
+      'Menyampaikan satu ide yang utuh dalam batas waktu 60 detik',
+    ],
+    closingStatement:
+      'Kamu nggak harus punya kata-kata yang sempurna. Yang penting, kamu tahu apa yang ingin kamu sampaikan, mengapa itu penting, dan bagaimana membuat orang lain memahaminya.',
+    presetGoals: [
+      'Menyampaikan satu pendapat di kelas/forum menggunakan formula Point → Reason → Example.',
+      'Berlatih menyederhanakan satu materi pelajaran rumit kepada teman sebangkumu.',
+      'Menuliskan satu pesan utama dalam satu kalimat sebelum memulai presentasi kelompok.',
+      'Melakukan tantangan bicara 60 detik secara mandiri di depan cermin setiap 2 hari.',
+    ],
+  },
+  sources: [
+    {
+      title: 'How to Speak So That People Want to Listen',
+      authorOrInstitution: 'Julian Treasure (TED Conferences)',
+      url: 'https://www.ted.com/talks/julian_treasure_how_to_speak_so_that_people_want_to_listen',
+      type: 'Video',
+    },
+    {
+      title: 'Public Speaking Tips & Speech Structure',
+      authorOrInstitution: 'Toastmasters International',
+      url: 'https://www.toastmasters.org/resources/public-speaking-tips',
+      type: 'Panduan',
+    },
+    {
+      title: 'How to Structure an Effective Presentation',
+      authorOrInstitution: 'Harvard Division of Continuing Education',
+      url: 'https://professional.dce.harvard.edu/blog/how-to-structure-an-effective-presentation/',
+      type: 'Panduan',
+    },
+    {
+      title: 'Pedoman Komunikasi Efektif Remaja & Bina Ketahanan',
       authorOrInstitution: 'BKKBN & Jejaring PIK-R Indonesia',
       url: 'https://www.bkkbn.go.id/',
       type: 'Panduan',
@@ -1016,6 +1568,7 @@ export const module01EnglishStartSpeaking: Lesson = {
 export const lessonsRegistry: Record<string, Lesson> = {
   'berani-bicara': module01BeraniBicara,
   'speak-confidence': module01BeraniBicara, // Alias for seamless navigation
+  'menyampaikan-ide': module02MenyampaikanIde,
   'start-speaking': module01EnglishStartSpeaking,
 };
 
@@ -1031,7 +1584,7 @@ export function getLessonBySlug(slug: string): Lesson | undefined {
  * Retrieve all registered lessons
  */
 export function getAllLessons(): Lesson[] {
-  return [module01BeraniBicara, module01EnglishStartSpeaking];
+  return [module01BeraniBicara, module02MenyampaikanIde, module01EnglishStartSpeaking];
 }
 
 /**

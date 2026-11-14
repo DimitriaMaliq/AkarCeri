@@ -7,6 +7,8 @@ interface LessonCompletionProps {
   nextModuleSlug?: string;
   nextModuleTitle?: string;
   parentPillarLink?: { to: string; label: string };
+  completionTitle?: string;
+  completionMessage?: string;
 }
 
 export const LessonCompletion: React.FC<LessonCompletionProps> = ({
@@ -14,6 +16,8 @@ export const LessonCompletion: React.FC<LessonCompletionProps> = ({
   nextModuleSlug,
   nextModuleTitle = 'Modul 02: Speak Without Translating',
   parentPillarLink,
+  completionTitle,
+  completionMessage,
 }) => {
   return (
     <section
@@ -42,7 +46,7 @@ export const LessonCompletion: React.FC<LessonCompletionProps> = ({
 
             <div className="flex items-center gap-3 mb-3">
               <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-medium text-cream leading-tight">
-                LESSON COMPLETE
+                {completionTitle || lesson.completionTitle || 'LESSON COMPLETE'}
               </h3>
             </div>
 
@@ -52,7 +56,9 @@ export const LessonCompletion: React.FC<LessonCompletionProps> = ({
             </p>
 
             <p className="text-sm sm:text-base text-cream/85 leading-relaxed mb-8 max-w-xl">
-              Selamat! Kamu telah menyelesaikan seluruh tahapan belajar, menyimak paparan ahli, menuntaskan tantangan berbicara, menguji skenario pemahaman, dan mencatat komitmen bicaramu.
+              {completionMessage ||
+                lesson.completionMessage ||
+                'Selamat! Kamu telah menyelesaikan seluruh tahapan belajar, menyimak paparan ahli, menuntaskan tantangan berbicara, menguji skenario pemahaman, dan mencatat komitmen bicaramu.'}
             </p>
 
             {/* Navigation Buttons */}

@@ -3,6 +3,11 @@ import React, { useState } from 'react';
 interface GoalSectionProps {
   sectionId?: string;
   orderNumber?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  checklistItems?: string[];
+  closingStatement?: string;
   presetGoals?: string[];
   initialSelectedGoal?: string;
   initialCustomGoal?: string;
@@ -15,6 +20,11 @@ const CUSTOM_GOAL_KEY = '__custom__';
 export const GoalSection: React.FC<GoalSectionProps> = ({
   sectionId,
   orderNumber = '08',
+  title,
+  subtitle,
+  description,
+  checklistItems,
+  closingStatement,
   presetGoals = [
     'Mengajukan satu pertanyaan atau tanggapan di kelas/forum minggu ini.',
     'Memperkenalkan diri kepada satu orang baru di sekolah atau komunitas.',
@@ -66,7 +76,7 @@ export const GoalSection: React.FC<GoalSectionProps> = ({
             {orderNumber}
           </span>
           <span className="text-xs font-bold uppercase tracking-wider text-cherry font-sans">
-            Aksi Nyata • Target 7 Hari
+            {subtitle || 'Aksi Nyata • Target 7 Hari'}
           </span>
         </div>
 
@@ -74,12 +84,40 @@ export const GoalSection: React.FC<GoalSectionProps> = ({
           id="goal-section-heading"
           className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-chocolate mb-4 leading-snug"
         >
-          Your First Speaking Goal
+          {title || 'Your First Speaking Goal'}
         </h2>
 
         <p className="text-base sm:text-lg text-chocolate/85 leading-relaxed mb-8 font-sans">
-          Kecakapan hidup tidak bertumbuh dari hafalan teori belaka, melainkan dari keberanian mengulang satu komitmen mikro yang nyata. Tentukan target bicaramu untuk 7 hari ke depan.
+          {description ||
+            'Kecakapan hidup tidak bertumbuh dari hafalan teori belaka, melainkan dari keberanian mengulang satu komitmen mikro yang nyata. Tentukan target bicaramu untuk 7 hari ke depan.'}
         </p>
+
+        {/* Completion Checklist (if provided) */}
+        {checklistItems && checklistItems.length > 0 && (
+          <div className="rounded-3xl bg-cream-muted border border-sage/40 p-6 sm:p-9 shadow-sm font-sans mb-8">
+            <div className="flex items-center gap-2 mb-4 text-xs font-bold uppercase tracking-wider text-cherry">
+              <span className="material-symbols-outlined text-base">task_alt</span>
+              <span>Sekarang Kamu Bisa:</span>
+            </div>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {checklistItems.map((item, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-chocolate/85">
+                  <span className="w-5 h-5 rounded-full bg-green-100 text-green-800 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                    ✓
+                  </span>
+                  <span className="leading-snug">{item}</span>
+                </li>
+              ))}
+            </ul>
+            {closingStatement && (
+              <div className="pt-4 border-t border-sage/30">
+                <p className="font-serif italic text-sm sm:text-base text-chocolate leading-relaxed">
+                  &ldquo;{closingStatement}&rdquo;
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Goal Selection Card */}
         <div className="rounded-3xl bg-cream-muted border border-sage/40 p-6 sm:p-10 shadow-sm font-sans mb-8">

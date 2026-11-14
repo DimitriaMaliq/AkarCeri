@@ -15,6 +15,7 @@ export const PublicSpeaking: React.FC = () => {
     {
       label: 'Menyampaikan Ide',
       sublabel: 'Organizing Ideas',
+      active: true,
     },
     {
       label: 'Bicara di Depan Orang',
@@ -52,7 +53,9 @@ export const PublicSpeaking: React.FC = () => {
       subtitle: 'Menata pikiran agar gagasanmu tersampaikan secara runtut, lugas, dan mudah dipahami.',
       level: 'Pemula-Menengah',
       duration: '20 Menit',
-      status: 'coming_soon',
+      status: 'available',
+      slug: 'menyampaikan-ide',
+      targetUrl: '/pelajaran/menyampaikan-ide',
       description:
         'Banyak gagasan cemerlang gagal dipahami karena disampaikan tanpa struktur yang jelas. Modul ini melatih cara memisahkan pesan inti dari detail pendukung, merangkai formula Point → Reason → Example, serta menjelaskan ide rumit dengan analogi sederhana.',
       focusPoints: [
@@ -60,6 +63,7 @@ export const PublicSpeaking: React.FC = () => {
         'Separating main ideas and supporting ideas',
         'Structuring thoughts simply (Point → Reason → Example)',
         'Explaining an idea clearly tanpa berbelit-belit',
+        '60-Second Challenge untuk menguji kejelasan struktur',
       ],
     },
     {

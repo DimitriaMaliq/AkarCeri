@@ -17,6 +17,7 @@ export const VideoSection: React.FC<VideoSectionProps> = ({
   onWatchedToggle,
 }) => {
   const [watched, setWatched] = useState(initialWatched);
+  const [selectedThinkOption, setSelectedThinkOption] = useState<number | null>(null);
 
   const handleToggleWatched = () => {
     const next = !watched;
@@ -127,6 +128,55 @@ export const VideoSection: React.FC<VideoSectionProps> = ({
               </div>
             </div>
 
+            {/* "Think About It" Checkpoint Card (if provided) */}
+            {video.thinkAboutIt && (
+              <div className="rounded-2xl bg-cream p-5 sm:p-6 border border-sage/40 mb-6 font-sans">
+                <div className="flex items-center gap-2 mb-2 text-xs font-bold uppercase tracking-widest text-cherry">
+                  <span className="material-symbols-outlined text-base">psychology</span>
+                  <span>Think About It • Refleksi Singkat</span>
+                </div>
+                <h4 className="font-serif text-base sm:text-lg font-bold text-chocolate mb-4 leading-snug">
+                  {video.thinkAboutIt.question}
+                </h4>
+                <div className="space-y-2 mb-3">
+                  {video.thinkAboutIt.options.map((opt, idx) => {
+                    const isSelected = selectedThinkOption === idx;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setSelectedThinkOption(idx)}
+                        className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-center gap-3 ${
+                          isSelected
+                            ? 'bg-cherry/10 border-cherry text-chocolate font-semibold ring-1 ring-cherry'
+                            : 'bg-cream-muted/60 border-sage/35 text-chocolate/80 hover:bg-cream'
+                        }`}
+                      >
+                        <span
+                          className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border text-[11px] font-bold ${
+                            isSelected
+                              ? 'bg-cherry text-cream border-cherry'
+                              : 'border-sage/50 text-chocolate/50 bg-cream'
+                          }`}
+                        >
+                          {isSelected ? '✓' : idx + 1}
+                        </span>
+                        <span>{opt}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectedThinkOption !== null && (
+                  <p className="text-xs text-cherry font-medium mt-3 italic animate-fade-in-up flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">check_circle</span>
+                    <span>
+                      Terima kasih atas refleksimu. Mengakui titik yang paling menantang adalah langkah pertama untuk menguasainya di modul ini!
+                    </span>
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Action Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2 font-sans">
               <a
@@ -135,7 +185,9 @@ export const VideoSection: React.FC<VideoSectionProps> = ({
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cream border border-sage/50 text-chocolate hover:text-cherry hover:border-cherry text-xs sm:text-sm font-semibold transition-all duration-200"
               >
-                <span>Tonton di YouTube Resmi</span>
+                <span>
+                  {video.url.includes('ted.com') ? 'Tonton di TED Talk Resmi' : 'Tonton di YouTube Resmi'}
+                </span>
                 <span
                   className="material-symbols-outlined text-sm transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
                   aria-hidden="true"

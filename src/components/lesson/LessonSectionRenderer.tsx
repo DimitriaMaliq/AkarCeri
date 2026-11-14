@@ -125,6 +125,11 @@ export const LessonSectionRenderer: React.FC<LessonSectionRendererProps> = ({
         <GoalSection
           sectionId={section.id}
           orderNumber={section.orderNumber}
+          title={lesson.speakingGoalPrompt?.title || section.title}
+          subtitle={lesson.speakingGoalPrompt?.subtitle || section.subtitle}
+          description={lesson.speakingGoalPrompt?.description}
+          checklistItems={lesson.speakingGoalPrompt?.checklistItems}
+          closingStatement={lesson.speakingGoalPrompt?.closingStatement}
           presetGoals={lesson.speakingGoalPrompt?.presetGoals}
           initialSelectedGoal={progress.selectedGoal}
           initialCustomGoal={progress.customGoal}
