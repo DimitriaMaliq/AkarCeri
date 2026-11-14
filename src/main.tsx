@@ -35,8 +35,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/lessons/public-speaking" element={<PublicSpeaking />} />
         <Route path="/pelajaran/speak-confidence" element={<PublicSpeaking />} />
         <Route path="/lessons/speak-confidence" element={<PublicSpeaking />} />
-        <Route path="/pelajaran/menyampaikan-ide" element={<LessonDetail />} />
-        <Route path="/lessons/menyampaikan-ide" element={<LessonDetail />} />
 
         {/* Pilar Jalur Belajar: English Your Way */}
         <Route path="/pelajaran/english-your-way" element={<EnglishYourWay />} />

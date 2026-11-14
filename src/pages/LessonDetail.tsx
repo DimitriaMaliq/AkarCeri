@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { PageLayout } from '../components/PageLayout';
 import {
   getLessonBySlug,
@@ -312,9 +312,24 @@ const LessonDetailContent: React.FC<LessonDetailContentProps> = ({ slug, lesson 
   );
 };
 
-export const LessonDetail: React.FC = () => {
+interface LessonDetailProps {
+  initialSlug?: string;
+}
+
+export const LessonDetail: React.FC<LessonDetailProps> = ({ initialSlug }) => {
   const { slug } = useParams<{ slug: string }>();
-  const activeSlug = slug || 'berani-bicara';
+  const location = useLocation();
+
+  // Extract last segment of pathname if slug param is missing
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const derivedFromPath = pathParts.length > 0 ? pathParts[pathParts.length - 1] : undefined;
+
+  const activeSlug =
+    initialSlug ||
+    slug ||
+    (derivedFromPath && derivedFromPath !== 'pelajaran' && derivedFromPath !== 'lessons'
+      ? derivedFromPath
+      : 'berani-bicara');
 
   if (activeSlug === 'english-your-way') {
     return <EnglishYourWay />;
