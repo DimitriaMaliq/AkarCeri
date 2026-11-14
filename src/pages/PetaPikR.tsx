@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageLayout } from '../components/PageLayout';
-import { MapPlaceholder } from '../components/MapPlaceholder';
+import { PikRGoogleMap } from '../components/PikRGoogleMap';
 import {
   pikRLocations,
   PIK_R_FILTER_OPTIONS,
@@ -13,66 +13,121 @@ import {
 interface PikRCardProps {
   location: PikRLocation;
   index: number;
+  isSelected: boolean;
+  onSelect: (location: PikRLocation) => void;
 }
 
-const PikRCard: React.FC<PikRCardProps> = ({ location, index }) => (
-  <div
-    className="group relative rounded-3xl bg-cream-muted border border-sage/40 p-6 sm:p-8
-               hover:border-cherry hover:bg-cream hover:-translate-y-1
-               shadow-sm hover:shadow-md transition-all duration-300
-               flex flex-col gap-4 animate-fade-in-up"
-    style={{ animationDelay: `${index * 60}ms`, animationFillMode: 'both' }}
-  >
-    {/* Ordinal Number */}
-    <span className="font-serif text-4xl sm:text-5xl font-bold text-cherry/25 leading-none select-none">
-      {location.ordinal}
-    </span>
+const PikRCard: React.FC<PikRCardProps> = ({
+  location,
+  index,
+  isSelected,
+  onSelect,
+}) => {
+  const externalMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    `${location.name}, ${location.school}, ${location.address}`
+  )}`;
 
-    {/* Name & School */}
-    <div>
-      <h3 className="font-serif text-lg sm:text-xl font-bold text-chocolate leading-tight mb-1">
-        {location.name}
-      </h3>
-      <p className="text-xs font-semibold text-chocolate/65 font-sans uppercase tracking-wide">
-        {location.school}
-      </p>
-    </div>
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
+      onClick={() => onSelect(location)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(location);
+        }
+      }}
+      className={`group relative rounded-3xl p-6 sm:p-7 transition-all duration-300 flex flex-col gap-3.5 cursor-pointer text-left outline-none focus-visible:ring-2 focus-visible:ring-cherry ${
+        isSelected
+          ? 'bg-cream border-2 border-cherry ring-2 ring-cherry/20 shadow-md -translate-y-0.5'
+          : 'bg-cream-muted border border-sage/40 hover:border-cherry/60 hover:bg-cream hover:-translate-y-0.5 shadow-sm'
+      }`}
+      style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'both' }}
+    >
+      {/* Top Header: Ordinal & Selection Status */}
+      <div className="flex items-center justify-between gap-2">
+        <span
+          className={`font-serif text-3xl sm:text-4xl font-bold leading-none select-none transition-colors ${
+            isSelected ? 'text-cherry' : 'text-cherry/30 group-hover:text-cherry/50'
+          }`}
+        >
+          {location.ordinal}
+        </span>
 
-    {/* District Badge */}
-    <span className="self-start px-3 py-1 rounded-full bg-sage/25 text-chocolate text-[11px]
-                     font-bold border border-sage/40 font-sans tracking-wide uppercase">
-      {location.district}
-    </span>
+        <div className="flex items-center gap-1.5">
+          {isSelected ? (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-cherry text-cream text-[10px] font-bold uppercase tracking-wider font-sans shadow-sm">
+              <span className="material-symbols-outlined text-xs" aria-hidden="true">
+                check
+              </span>
+              <span>Terpilih di Peta</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sage/20 text-chocolate/70 text-[10px] font-bold uppercase tracking-wider font-sans group-hover:bg-sage/35 transition-colors">
+              <span>Klik untuk Lihat</span>
+            </span>
+          )}
+        </div>
+      </div>
 
-    {/* Address */}
-    <div className="flex items-start gap-2 text-chocolate/75">
-      <span
-        className="material-symbols-outlined text-base text-cherry/60 mt-0.5 flex-shrink-0"
-        aria-hidden="true"
-      >
-        location_on
+      {/* Name & School */}
+      <div>
+        <h3 className="font-serif text-lg sm:text-xl font-bold text-chocolate leading-tight mb-1 group-hover:text-cherry transition-colors">
+          {location.name}
+        </h3>
+        <p className="text-xs font-semibold text-chocolate/65 font-sans uppercase tracking-wide">
+          {location.school}
+        </p>
+      </div>
+
+      {/* District Badge */}
+      <span className="self-start px-2.5 py-0.5 rounded-full bg-sage/25 text-chocolate text-[11px] font-bold border border-sage/40 font-sans tracking-wide uppercase">
+        {location.district}
       </span>
-      <p className="text-xs leading-relaxed font-sans">{location.address}</p>
-    </div>
 
-    {/* Lihat Lokasi — disabled until Google Maps integration */}
-    <div className="mt-auto pt-2 border-t border-sage/30 flex items-center justify-between">
-      <button
-        type="button"
-        disabled
-        aria-label="Navigasi belum tersedia"
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-chocolate/40
-                   cursor-not-allowed select-none font-sans"
-      >
-        <span className="material-symbols-outlined text-sm">map</span>
-        <span>Lihat Lokasi</span>
-      </button>
-      <span className="text-[10px] font-bold uppercase tracking-wider text-chocolate/35 font-sans">
-        Segera Hadir
-      </span>
+      {/* Address */}
+      <div className="flex items-start gap-2 text-chocolate/75 text-xs font-sans">
+        <span
+          className="material-symbols-outlined text-base text-cherry/60 mt-0.5 flex-shrink-0"
+          aria-hidden="true"
+        >
+          location_on
+        </span>
+        <p className="leading-relaxed">{location.address}</p>
+      </div>
+
+      {/* Card Action Footer */}
+      <div className="mt-auto pt-3 border-t border-sage/30 flex items-center justify-between gap-2 text-xs font-sans">
+        <span
+          className={`inline-flex items-center gap-1 font-semibold ${
+            isSelected ? 'text-cherry font-bold' : 'text-chocolate/60 group-hover:text-cherry'
+          }`}
+        >
+          <span className="material-symbols-outlined text-sm" aria-hidden="true">
+            {isSelected ? 'pin_drop' : 'map'}
+          </span>
+          <span>{isSelected ? 'Fokus Aktif' : 'Lihat Lokasi'}</span>
+        </span>
+
+        <a
+          href={externalMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="inline-flex items-center gap-1 text-[11px] font-semibold text-chocolate/55 hover:text-cherry transition-colors"
+          aria-label={`Buka ${location.name} di tab Google Maps baru`}
+        >
+          <span>Google Maps</span>
+          <span className="material-symbols-outlined text-xs" aria-hidden="true">
+            open_in_new
+          </span>
+        </a>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Empty State ─────────────────────────────────────────────────────────────
 
@@ -81,32 +136,62 @@ interface EmptyStateProps {
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({ district }) => (
-  <div className="col-span-full flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
+  <div className="flex flex-col items-center justify-center py-16 px-6 rounded-3xl bg-cream-muted border border-sage/40 text-center animate-fade-in-up">
     <span
-      className="material-symbols-outlined text-5xl text-sage mb-4"
+      className="material-symbols-outlined text-5xl text-sage mb-3"
       aria-hidden="true"
     >
       location_searching
     </span>
-    <p className="font-serif text-xl text-chocolate/60 mb-2">Belum ada lokasi dalam daftar.</p>
-    {district !== 'Semua' && (
-      <p className="text-sm text-chocolate/50 font-sans max-w-xs">
-        Wilayah <span className="font-semibold text-chocolate/70">{district}</span> belum
-        memiliki data PIK-R yang tersedia. Informasi akan diperbarui secara berkala.
-      </p>
-    )}
+    <p className="font-serif text-xl text-chocolate/70 mb-2 font-medium">
+      Belum ada lokasi dalam daftar.
+    </p>
+    <p className="text-sm text-chocolate/55 font-sans max-w-sm leading-relaxed">
+      Wilayah <span className="font-semibold text-chocolate/80">{district}</span> saat ini
+      belum memiliki data PIK-R yang terdaftar. Peta di samping menampilkan ikhtisar geografis wilayah.
+    </p>
   </div>
 );
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Main Page Component ──────────────────────────────────────────────────────
 
 export const PetaPikR: React.FC = () => {
   const [activeDistrict, setActiveDistrict] = useState<PikRDistrict>('Semua');
+  const [selectedLocation, setSelectedLocation] = useState<PikRLocation | null>(
+    pikRLocations[0]
+  );
 
+  // Compute filtered list based on selected district
   const filteredLocations: PikRLocation[] =
     activeDistrict === 'Semua'
       ? pikRLocations
       : pikRLocations.filter((loc) => loc.district === activeDistrict);
+
+  // Handle district filter change with synchronized map state
+  const handleDistrictChange = (district: PikRDistrict) => {
+    setActiveDistrict(district);
+    const newFiltered =
+      district === 'Semua'
+        ? pikRLocations
+        : pikRLocations.filter((loc) => loc.district === district);
+
+    if (newFiltered.length === 0) {
+      // Empty district (e.g. Cimahi Utara) -> map displays district overview
+      setSelectedLocation(null);
+    } else {
+      // If currently selected location is in the new filter, keep it; otherwise select first
+      const existsInNew = selectedLocation
+        ? newFiltered.some((loc) => loc.id === selectedLocation.id)
+        : false;
+      if (!existsInNew) {
+        setSelectedLocation(newFiltered[0]);
+      }
+    }
+  };
+
+  const handleSelectLocation = (loc: PikRLocation) => {
+    setSelectedLocation(loc);
+  };
 
   return (
     <PageLayout title="Peta PIK-R Kota Cimahi">
@@ -114,7 +199,7 @@ export const PetaPikR: React.FC = () => {
       {/* ─────────────────────────────────────────────────────────────────────
           SECTION 1: HERO
       ────────────────────────────────────────────────────────────────────── */}
-      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-10">
+      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-8">
         <div className="max-w-4xl mx-auto text-center flex flex-col items-center">
 
           {/* Eyebrow */}
@@ -148,28 +233,18 @@ export const PetaPikR: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────
-          SECTION 2: MAP PLACEHOLDER (future Google Maps)
-      ────────────────────────────────────────────────────────────────────── */}
-      <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-14">
-        <MapPlaceholder className="w-full" />
-      </section>
-
-      {/* ─────────────────────────────────────────────────────────────────────
-          SECTION 3: FILTER BAR + DIRECTORY GRID
+          SECTION 2: FILTER & DIRECTORY + MAP INTEGRATION
       ────────────────────────────────────────────────────────────────────── */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
 
-        {/* Filter bar */}
-        <div
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4
-                     border-b border-sage/30 pb-5 mb-8"
-        >
+        {/* Filter Bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sage/30 pb-5 mb-8">
           <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter Wilayah">
             {PIK_R_FILTER_OPTIONS.map((f) => (
               <button
                 key={f.id}
                 type="button"
-                onClick={() => setActiveDistrict(f.id)}
+                onClick={() => handleDistrictChange(f.id)}
                 aria-pressed={activeDistrict === f.id}
                 className={`px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${
                   activeDistrict === f.id
@@ -182,25 +257,60 @@ export const PetaPikR: React.FC = () => {
             ))}
           </div>
 
-          <span className="text-xs font-semibold text-cherry font-sans shrink-0">
-            {filteredLocations.length} lokasi
-          </span>
+          <div className="flex items-center gap-2 text-xs font-sans text-chocolate/70">
+            <span className="w-2 h-2 rounded-full bg-cherry shrink-0" aria-hidden="true" />
+            <span>
+              Menampilkan <strong className="text-cherry">{filteredLocations.length}</strong>{' '}
+              lokasi {activeDistrict !== 'Semua' ? `di ${activeDistrict}` : 'di Kota Cimahi'}
+            </span>
+          </div>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {filteredLocations.length === 0 ? (
-            <EmptyState district={activeDistrict} />
-          ) : (
-            filteredLocations.map((loc, i) => (
-              <PikRCard key={loc.id} location={loc} index={i} />
-            ))
-          )}
+        {/* Desktop: Side-by-side (Cards on Left, Google Maps on Right)
+            Mobile: Stacked (Google Maps on Top, Cards Below) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+          {/* Right Column (Mobile: order-1 on top, Desktop: order-2 on right, sticky) */}
+          <div className="order-1 lg:order-2 lg:col-span-6 xl:col-span-7 lg:sticky lg:top-24">
+            <PikRGoogleMap
+              selectedLocation={selectedLocation}
+              activeDistrict={activeDistrict}
+            />
+          </div>
+
+          {/* Left Column (Mobile: order-2 below, Desktop: order-1 on left) */}
+          <div className="order-2 lg:order-1 lg:col-span-6 xl:col-span-5 flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-1">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-chocolate">
+                Daftar PIK-R
+              </h3>
+              <span className="text-xs text-chocolate/60 font-sans">
+                {filteredLocations.length} titik ditemukan
+              </span>
+            </div>
+
+            {filteredLocations.length === 0 ? (
+              <EmptyState district={activeDistrict} />
+            ) : (
+              <div className="flex flex-col gap-4">
+                {filteredLocations.map((loc, i) => (
+                  <PikRCard
+                    key={loc.id}
+                    location={loc}
+                    index={i}
+                    isSelected={selectedLocation?.id === loc.id}
+                    onSelect={handleSelectLocation}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────
-          SECTION 4: APA ITU PIK-R?
+          SECTION 3: APA ITU PIK-R?
       ────────────────────────────────────────────────────────────────────── */}
       <section className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-16">
         <div className="flex flex-col py-4">
@@ -228,7 +338,7 @@ export const PetaPikR: React.FC = () => {
       </section>
 
       {/* ─────────────────────────────────────────────────────────────────────
-          SECTION 5: CLOSING CTA
+          SECTION 4: CLOSING CTA
       ────────────────────────────────────────────────────────────────────── */}
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20">
         <div className="bg-chocolate text-cream rounded-3xl p-8 sm:p-12 lg:p-16 relative overflow-hidden shadow-xl">
